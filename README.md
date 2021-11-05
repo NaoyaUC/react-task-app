@@ -12,3 +12,5 @@ styled-components
 MUI Material UI
 npm install @mui/material @mui/styled-engine-sc styled-components
 
+## 使用素材
+[emojipedia](https://emojipedia.org/blue-book/)
