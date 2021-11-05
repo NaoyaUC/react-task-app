@@ -1,19 +1,22 @@
-import { useAuthContext } from "components/Auth/AuthContext";
+import React from "react";
+
+
+// import { useAuthContext } from "./components/Auth/AuthContext";
 import { NavLink } from "react-router-dom";
+import { useAuthContext } from "../Auth/AuthContext";
 
 const style = {
   background: "#ffb969",
   padding: "10px",
-}
+};
 
 const navA = {
   padding: "10px",
   textDecoration: "none",
-  color : "#fff"
+  color: "#fff",
 };
 
 export const Header = () => {
-
   const { user } = useAuthContext();
 
   return (
@@ -38,7 +41,6 @@ export const Header = () => {
         <NavLink to="/memo" style={navA}>
           メモ一覧
         </NavLink>
-        
       </nav>
     </header>
   );

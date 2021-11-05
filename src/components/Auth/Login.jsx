@@ -1,9 +1,9 @@
 import { auth } from "firebase";
 import { useState } from "react";
-import { Link,useHistory } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export const Login = () => {
-  const history = useHistory();
+  const history = useNavigate();
   const [error, setError] = useState('');
   const LoginSubmit = async(event) => {
     event.preventDefault();
@@ -14,7 +14,7 @@ export const Login = () => {
       //ログイン
       await auth.signInWithEmailAndPassword(email.value, password.value);
       //Homeにリダイレクト
-      history.push("/");
+      history("/");
     }catch(error){
       console.log(error);
       setError(error.message);

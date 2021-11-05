@@ -6,9 +6,9 @@ FireBase
 - 退会機能
 
 
-
+## 仕様ライブラリ
+react-router-dom
 styled-components
-
-MUI(Material UIの略)
+MUI Material UI
 npm install @mui/material @mui/styled-engine-sc styled-components
 

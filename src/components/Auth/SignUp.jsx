@@ -1,24 +1,22 @@
+import React from "react";
 import { useState } from "react";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import { auth } from "../../firebase";
 
 export const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const history = useHistory();
+  const history = useNavigate();
 
   const [error, setError] = useState("");
 
-  const handleSubmit = async(event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     // console.log(email, password);
-    const { email, password} = event.target.elements;
+    const { email, password } = event.target.elements;
 
     try {
-      await auth.createUserWithEmailAndPassword(
-        email.value,
-        password.value
-      );
+      await auth.createUserWithEmailAndPassword(email.value, password.value);
       history.push("/");
     } catch (error) {
       console.log(error);

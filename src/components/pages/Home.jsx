@@ -1,13 +1,13 @@
 import { auth } from "firebase";
-import { useHistory} from "react-router";
+import { useNavigate } from "react-router";
 
 export const Home = () => {
   //custom hooks
-  const history = useHistory();
+  const history = useNavigate();
 
   const handleLogout = () => {
     auth.signOut();
-    history.push('/login')
+    history('/login');
   }
 
   return (
