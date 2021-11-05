@@ -11,6 +11,7 @@ import { AuthProvider } from "components/Auth/AuthContext";
 import { Login } from "components/Auth/Login";
 import { MemoList } from "components/pages/Memo/MemoList";
 import { MemoCreate } from "components/pages/Memo/MemoCreate";
+import { MemoEdit } from "components/pages/Memo/MemoEdit";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <PublicRoute path="/login" element={<Login />} />
           <PrivateRoute path="/memo" element={<MemoList />} />
           <PrivateRoute path="/memo/create" element={<MemoCreate />} />
+          <PrivateRoute path="/memo/edit/:id" element={<MemoEdit />} />
         </Routes>
 
         <Footer />
