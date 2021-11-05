@@ -1,7 +1,6 @@
 import firebase from "firebase/compat/app";
-// import { getAnalytics } from "firebase/analytics";
 import "firebase/compat/auth";
-// import {firebaseui} from "firebaseui";
+import 'firebase/compat/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -13,9 +12,9 @@ const firebaseConfig = {
   measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
 };
 
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
 
-// export const auth =  new firebaseui.auth.AuthUI(firebase.auth());
+export const db = firebase.firestore();
 
 export const auth = firebase.auth();
