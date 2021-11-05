@@ -9,7 +9,8 @@ import { Home } from "components/pages/Home";
 import { SignUp } from "components/Auth/SignUp";
 import { AuthProvider } from "components/Auth/AuthContext";
 import { Login } from "components/Auth/Login";
-import { MemoList } from "components/pages/MemoList";
+import { MemoList } from "components/pages/Memo/MemoList";
+import { MemoCreate } from "components/pages/Memo/MemoCreate";
 
 function App() {
   return (
@@ -18,10 +19,11 @@ function App() {
         <Header />
 
         <Routes>
-          <PrivateRoute path="/" element={<Home/>} />
-          <PublicRoute path="/signup" element={<SignUp/>} />
-          <PublicRoute path="/login" element={<Login/>} />
-          <PrivateRoute path="/memo" element={<MemoList/>} />
+          <PrivateRoute path="/" element={<Home />} />
+          <PublicRoute path="/signup" element={<SignUp />} />
+          <PublicRoute path="/login" element={<Login />} />
+          <PrivateRoute path="/memo" element={<MemoList />} />
+          <PrivateRoute path="/memo/create" element={<MemoCreate />} />
         </Routes>
 
         <Footer />
