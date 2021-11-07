@@ -13,7 +13,6 @@ export const MemoDelete = (props) => {
   async function handleDelete() {
     await deleteDoc(doc(db, "tasks", delete_id));
     alert("削除しました");
-    console.log(delete_id);
 
     //画面を閉じる?再読み込み
     handleClose();
@@ -61,7 +60,6 @@ const style = {
   transform: "translate(-50%, -50%)",
   width: 400,
   bgcolor: "background.paper",
-  boxShadow: 8,
-  borderRadius: 8,
+  borderRadius: 4,
   p: 2,
 };
