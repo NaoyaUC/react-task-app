@@ -89,6 +89,14 @@ export const MemoEdit = () => {
           >
             <Grid container spacing={2}>
               <Grid item xs={12}>
+                <small>
+                作成日:
+                <CreatedAt day={date.create} />
+                &nbsp; 更新日:
+                <CreatedAt day={date.update} />
+                </small>
+              </Grid>
+              <Grid item xs={12}>
                 <TextField
                   name="title"
                   required
@@ -100,12 +108,7 @@ export const MemoEdit = () => {
                   onChange={(event) => setTitle(event.target.value)}
                 />
               </Grid>
-              <Grid item xs={12}>
-                作成日：
-                <CreatedAt day={date.create} />
-                更新日
-                <CreatedAt day={date.update} />
-              </Grid>
+
               <Grid item xs={12}>
                 <TextField
                   required

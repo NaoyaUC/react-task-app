@@ -14,24 +14,35 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+
 import { MemoDelete } from "./MemoDelete";
 import { CreatedAt } from "components/parts/CreatedAt";
 import CircularProgress from "@mui/material/CircularProgress";
+import { MemoEdit2 } from "./MemoEdit2";
 
 export const MemoList = () => {
   const { user } = useAuthContext();
   const uid = user.uid;
   const [load, setLoad] = useState(true);
-
   const [memos, setMemo] = useState([]);
 
+  //delete
   const [id, setId] = useState();
   const [open, setOpen] = useState(false);
 
+  //edit
+  const [editOpen, setEditOpen] = useState(false);
+  const [editData, setEditData] = useState();
+
   const openModal = (delete_id) => {
-    // console.log(delete_id);
     setId(delete_id);
     setOpen(true);
+  };
+
+  const openEditModal = (data) => {
+    setEditData(data);
+    setEditOpen(true);
   };
 
   useEffect(() => {
@@ -39,6 +50,7 @@ export const MemoList = () => {
       db.collection("tasks")
         .where("docId", "==", uid)
         .orderBy("createdAt", "desc")
+        .limit(8)
         .get()
         .then((query) => {
           var buff = [];
@@ -46,7 +58,8 @@ export const MemoList = () => {
             var data = doc.data();
             buff.push({
               id: doc.id,
-              date: data.createdAt,
+              created: data.createdAt,
+              updated: data.updatedAt,
               title: data.title,
               memo: data.memo,
             });
@@ -79,7 +92,10 @@ export const MemoList = () => {
           メモ一覧
         </Typography>
         <NavLink to="/memo/create">新規作成</NavLink>
+
         <MemoDelete delete_id={id} open={open} setOpen={setOpen} />
+        <MemoEdit2 data={editData} open={editOpen} setOpen={setEditOpen} />
+
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
@@ -94,12 +110,12 @@ export const MemoList = () => {
                 return (
                   <TableRow key={index}>
                     <TableCell>
-                      <CreatedAt day={item.date} />
+                      <CreatedAt day={item.created} />
                     </TableCell>
                     <TableCell>{item.title}</TableCell>
                     <TableCell>{item.memo}</TableCell>
                     <TableCell>
-                      <Button
+                      {/* <Button
                         variant="contained"
                         sx={{ mt: 2, mb: 2, mr: 1 }}
                         color="warning"
@@ -107,12 +123,22 @@ export const MemoList = () => {
                         to={`/memo/edit/${item.id}`}
                       >
                         編集
+                      </Button> */}
+
+                      <Button
+                        variant="contained"
+                        sx={{ mt: 2, mb: 2, mr: 1 }}
+                        color="warning"
+                        onClick={() => openEditModal(item)}
+                      >
+                        編集
                       </Button>
+
                       <Button
                         variant="contained"
                         sx={{ mt: 2, mb: 2 }}
                         color="error"
-                        onClick={() => openModal(item.id)}
+                        onClick={() => openModal(item)}
                       >
                         削除
                       </Button>
@@ -123,6 +149,9 @@ export const MemoList = () => {
             </TableBody>
           </Table>
         </TableContainer>
+
+
+
       </Container>
     );
   }
