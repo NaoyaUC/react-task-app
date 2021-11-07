@@ -10,15 +10,15 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
+import { CreatedAt } from "components/parts/CreatedAt";
 
 export const MemoEdit = () => {
-
   const { id } = useParams();
   const [load, setLoad] = useState(true);
 
-  const [ title,setTitle] = useState('');
-  const [date,setDate] = useState('');
-  const [memo,setMemo] = useState('');
+  const [title, setTitle] = useState("");
+  const [memo, setMemo] = useState("");
+  const [date, setDate] = useState({});
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -27,46 +27,46 @@ export const MemoEdit = () => {
 
   const histrory = useNavigate();
 
-  async function getTask() {
-    const docRef = doc(db, "tasks", id);
-    const docSnap = await getDoc(docRef);
-
-    if ( docSnap.exists()) {
-      console.log(docSnap.data());
-      const data = docSnap.data();
-
-      setTitle(data.title);
-      setMemo(data.memo);
-      setDate(data.date);
-
-      setLoad(false);
-    } else {
-      console.log("No such document!");
-    }
-  }
-
   useEffect(() => {
+    const getTask = async () => {
+      const docRef = doc(db, "tasks", id);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        // console.log(docSnap.data());
+        const data = docSnap.data();
+
+        setTitle(data.title);
+        setMemo(data.memo);
+        setDate({
+          create: data.createdAt,
+          update: data.updatedAt,
+        });
+
+        setLoad(false);
+      } else {
+        console.log("No such document!");
+      }
+    };
+    
     getTask();
-  }, []);
+  }, [id]);
 
   async function handleUpdate() {
     let timestamp = firebase.firestore.FieldValue.serverTimestamp();
 
-    db.collection("tasks")
-      .doc(id)
-      .set({
-        title: title,
-        date: date,
-        memo: memo,
-        updatedAt: timestamp,
-      });
+    db.collection("tasks").doc(id).update({
+      title: title,
+      memo: memo,
+      updatedAt: timestamp,
+    });
     alert("変更しました");
 
     histrory("/memo");
   }
 
   if (load) {
-    return <p></p>
+    return <p></p>;
   } else {
     return (
       <Container component="main" maxWidth="xs">
@@ -101,15 +101,10 @@ export const MemoEdit = () => {
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="date"
-                  type="date"
-                  name="date"
-                  value={date}
-                  onChange={(event) => setDate(event.target.value)}
-                />
+                作成日：
+                <CreatedAt day={date.create} />
+                更新日
+                <CreatedAt day={date.update} />
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -140,4 +135,3 @@ export const MemoEdit = () => {
     );
   }
 };
-
