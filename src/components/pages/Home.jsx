@@ -1,19 +1,23 @@
-import { auth } from "firebase";
-import { useNavigate } from "react-router";
+import Container from "@mui/material/Container";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
 export const Home = () => {
-  //custom hooks
-  const history = useNavigate();
-
-  const handleLogout = () => {
-    auth.signOut();
-    history('/login');
-  }
 
   return (
-    <div style={{ margin: "2em" }}>
-      <h1>Home</h1>
-      <button onClick={handleLogout}>ログアウト</button>
-    </div>
+    <Container component="main">
+      <Box
+        sx={{
+          marginTop: 2,
+          boxShadow: 8,
+          padding: 2,
+          marginBottom: 4,
+        }}
+      >
+        <Typography component="h1" variant="h5">
+          HOME
+        </Typography>
+      </Box>
+    </Container>
   );
 };
