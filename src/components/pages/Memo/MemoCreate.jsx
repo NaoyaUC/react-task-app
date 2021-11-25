@@ -2,7 +2,6 @@
 import firebase from "firebase/compat/app";
 import { db } from "firebase";
 import { NavLink, } from "react-router-dom";
-
 import { useAuthContext } from "components/Auth/AuthContext";
 
 import Button from "@mui/material/Button";

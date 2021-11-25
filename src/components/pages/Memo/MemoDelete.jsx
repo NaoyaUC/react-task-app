@@ -11,7 +11,7 @@ export const MemoDelete = (props) => {
   const handleClose = () => setOpen(false);
 
   async function handleDelete() {
-    await deleteDoc(doc(db, "tasks", delete_id));
+    await deleteDoc(doc(db, "tasks", delete_id.id));
     alert("削除しました");
 
     //画面を閉じる?再読み込み

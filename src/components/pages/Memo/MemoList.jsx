@@ -5,21 +5,25 @@ import { NavLink } from "react-router-dom";
 import { useAuthContext } from "components/Auth/AuthContext";
 
 import Container from "@mui/material/Container";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 
 import { MemoDelete } from "./MemoDelete";
+import { MemoEdit } from "./MemoEdit";
 import { CreatedAt } from "components/parts/CreatedAt";
 import CircularProgress from "@mui/material/CircularProgress";
-import { MemoEdit2 } from "./MemoEdit2";
+
+import { styled } from "@mui/material/styles";
+
+
+
+const PaperX = styled(Paper)({
+  padding: 1,
+  width:"100%",
+  backgroundColor: "#f2fcd1"
+});
 
 export const MemoList = () => {
   const { user } = useAuthContext();
@@ -94,65 +98,44 @@ export const MemoList = () => {
         <NavLink to="/memo/create">新規作成</NavLink>
 
         <MemoDelete delete_id={id} open={open} setOpen={setOpen} />
-        <MemoEdit2 data={editData} open={editOpen} setOpen={setEditOpen} />
+        <MemoEdit data={editData} open={editOpen} setOpen={setEditOpen} />
 
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>作成日</TableCell>
-                <TableCell>タイトル</TableCell>
-                <TableCell>詳細</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {memos.map((item, index) => {
-                return (
-                  <TableRow key={index}>
-                    <TableCell>
-                      <CreatedAt day={item.created} />
-                    </TableCell>
-                    <TableCell>{item.title}</TableCell>
-                    <TableCell>{item.memo}</TableCell>
-                    <TableCell>
-                      {/* <Button
-                        variant="contained"
-                        sx={{ mt: 2, mb: 2, mr: 1 }}
-                        color="warning"
-                        component={NavLink}
-                        to={`/memo/edit/${item.id}`}
-                      >
-                        編集
-                      </Button> */}
+        <Grid container >
+          {memos.map((item, index) => {
+            return (
+              <Grid item sm={12} md={2} lg={2} key={index} sx={{ p: 1 }}>
+                <PaperX elevation={0}>
+                  <div>
+                    {item.title}
+                    <CreatedAt day={item.created} />
+                  </div>
+                  <div>{item.memo}</div>
+                  <div>
+                    <Button
+                      variant="contained"
+                      sx={{ my: 1, mr: 1 }}
+                      color="warning"
+                      onClick={() => openEditModal(item)}
+                    >
+                      編集
+                    </Button>
 
-                      <Button
-                        variant="contained"
-                        sx={{ mt: 2, mb: 2, mr: 1 }}
-                        color="warning"
-                        onClick={() => openEditModal(item)}
-                      >
-                        編集
-                      </Button>
-
-                      <Button
-                        variant="contained"
-                        sx={{ mt: 2, mb: 2 }}
-                        color="error"
-                        onClick={() => openModal(item)}
-                      >
-                        削除
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-
-
-
+                    <Button
+                      variant="contained"
+                      sx={{ my: 1 }}
+                      color="error"
+                      onClick={() => openModal(item)}
+                    >
+                      削除
+                    </Button>
+                  </div>
+                </PaperX>
+              </Grid>
+            );
+          })}
+        </Grid>
       </Container>
     );
   }
 };
+

@@ -1,83 +1,79 @@
 import { useState, useEffect } from "react";
-import { NavLink, useNavigate, useParams } from "react-router-dom";
 import firebase from "firebase/compat/app";
 import { db } from "firebase";
-import { doc, getDoc } from "firebase/firestore";
 
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
 import { CreatedAt } from "components/parts/CreatedAt";
+import Modal from "@mui/material/Modal";
 
-export const MemoEdit = () => {
-  const { id } = useParams();
-  const [load, setLoad] = useState(true);
+export const MemoEdit = (props) => {
+  //propsでdataの受取
+  const { data, open, setOpen } = props;
 
+  const handleClose = () => setOpen(false);
   const [title, setTitle] = useState("");
+  const [editId, setId] = useState("");
   const [memo, setMemo] = useState("");
   const [date, setDate] = useState({});
+  const [load, setLoad] = useState(true);
 
   const handleSubmit = (event) => {
     event.preventDefault();
     handleUpdate();
   };
 
-  const histrory = useNavigate();
-
+  // const edit_id = data.id;
   useEffect(() => {
-    const getTask = async () => {
-      const docRef = doc(db, "tasks", id);
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        // console.log(docSnap.data());
-        const data = docSnap.data();
-
-        setTitle(data.title);
-        setMemo(data.memo);
-        setDate({
-          create: data.createdAt,
-          update: data.updatedAt,
-        });
-
-        setLoad(false);
-      } else {
-        console.log("No such document!");
-      }
+    const getTask = () => {
+      setTitle(data.title);
+      setId(data.id);
+      setMemo(data.memo);
+      setDate({
+        created: data.created,
+        updated: data.updated,
+      });
+      setLoad(true);
     };
-    
-    getTask();
-  }, [id]);
+
+    if (data) {
+      getTask();
+    }
+  }, [data]);
 
   async function handleUpdate() {
     let timestamp = firebase.firestore.FieldValue.serverTimestamp();
 
-    db.collection("tasks").doc(id).update({
+    //エラー処理
+    if (title === "") {
+      alert("未入力です");
+      return;
+    }
+
+    await db.collection("tasks").doc(editId).update({
       title: title,
       memo: memo,
       updatedAt: timestamp,
     });
     alert("変更しました");
 
-    histrory("/memo");
+    //画面を閉じる?再読み込み
+    window.location.reload();
   }
 
-  if (load) {
-    return <p></p>;
+  if (!load) {
+    return "";
   } else {
     return (
-      <Container component="main" maxWidth="xs">
-        <Box
-          sx={{
-            marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
           <Typography component="h1" variant="h5">
             編集
           </Typography>
@@ -87,54 +83,62 @@ export const MemoEdit = () => {
             onSubmit={handleSubmit}
             sx={{ mt: 3 }}
           >
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <small>
-                作成日:
-                <CreatedAt day={date.create} />
-                &nbsp; 更新日:
-                <CreatedAt day={date.update} />
-                </small>
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  name="title"
-                  required
-                  fullWidth
-                  id="title"
-                  label="タイトル"
-                  autoFocus
-                  value={title}
-                  onChange={(event) => setTitle(event.target.value)}
-                />
-              </Grid>
+            <small>
+              作成日:
+              <CreatedAt day={date.created} />
+              &nbsp; 更新日:
+              <CreatedAt day={date.updated} />
+            </small>
 
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="memo"
-                  name="memo"
-                  multiline
-                  rows={4}
-                  value={memo}
-                  onChange={(event) => setMemo(event.target.value)}
-                />
-              </Grid>
-            </Grid>
-            <Button
-              type="submit"
+            <TextField
+              name="title"
+              required
               fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              color="success"
+              id="title"
+              autoFocus
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+            />
+            <TextField
+              required
+              fullWidth
+              id="memo"
+              name="memo"
+              multiline
+              rows={4}
+              value={memo}
+              onChange={(event) => setMemo(event.target.value)}
+            />
+            <Box
+              sx={{ mt: 3, display: "flex", justifyContent: "space-around" }}
             >
-              更新
-            </Button>
+              <Button sx={{ mt: 1, mb: 1 }} onClick={handleClose}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+                color="warning"
+              >
+                更新
+              </Button>
+            </Box>
           </Box>
         </Box>
-        <NavLink to="/memo/">一覧に戻る</NavLink>
-      </Container>
+      </Modal>
     );
   }
+};
+
+const style = {
+  position: "absolute",
+  textAlign: "center",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  borderRadius: 4,
+  p: 2,
 };
