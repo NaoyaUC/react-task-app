@@ -7,6 +7,7 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Modal from "@mui/material/Modal";
 import { CreatedAt } from "components/parts/CreatedAt";
+import { MemoDelete } from "./MemoDelete";
 
 export const MemoEdit = (props) => {
   //propsでdataの受取
@@ -14,17 +15,25 @@ export const MemoEdit = (props) => {
 
   const handleClose = () => setOpen(false);
   const [title, setTitle] = useState("");
-  const [editId, setId] = useState("");
+  const [id, setId] = useState("");
   const [memo, setMemo] = useState("");
   const [date, setDate] = useState({});
   const [load, setLoad] = useState(true);
+
+  const [delOpen, setDelOpen] = useState(false);
+
+
+  //削除モーダルの表示
+  const openEditModal = (event) => {
+    event.preventDefault();
+    setDelOpen(true);
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     handleUpdate();
   };
 
-  // const edit_id = data.id;
   useEffect(() => {
     const getTask = () => {
       setTitle(data.title);
@@ -51,7 +60,7 @@ export const MemoEdit = (props) => {
       return;
     }
 
-    await db.collection("tasks").doc(editId).update({
+    await db.collection("tasks").doc(id).update({
       title: title,
       memo: memo,
       updatedAt: timestamp,
@@ -73,12 +82,7 @@ export const MemoEdit = (props) => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Box
-            component="form"
-            noValidate
-            onSubmit={handleSubmit}
-            sx={{ mt: 3 }}
-          >
+          <Box component="form" noValidate onSubmit={handleSubmit}>
             <small>
               作成日:
               <CreatedAt day={date.created} />
@@ -93,7 +97,7 @@ export const MemoEdit = (props) => {
               id="title"
               autoFocus
               value={title}
-              style={{ marginBottom:"2" }}
+              style={{ marginBottom: "2" }}
               onChange={(event) => setTitle(event.target.value)}
             />
             <TextField
@@ -120,8 +124,19 @@ export const MemoEdit = (props) => {
               >
                 更新
               </Button>
+
+              <Button
+                variant="contained"
+                color="error"
+                sx={{ mt: 3, mb: 2 }}
+                onClick={(event) => openEditModal(event)}
+              >
+                削除
+              </Button>
             </Box>
           </Box>
+
+          <MemoDelete delete_id={id} open={delOpen} setOpen={setDelOpen} />
         </Box>
       </Modal>
     );
@@ -134,7 +149,8 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
+  maxWidth: 600,
+  width:"100%",
   bgcolor: "background.paper",
   borderRadius: 4,
   p: 2,

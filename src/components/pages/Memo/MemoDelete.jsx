@@ -11,9 +11,8 @@ export const MemoDelete = (props) => {
   const handleClose = () => setOpen(false);
 
   async function handleDelete() {
-    await deleteDoc(doc(db, "tasks", delete_id.id));
+    await deleteDoc(doc(db, "tasks", delete_id));
     alert("削除しました");
-
     //画面を閉じる?再読み込み
     handleClose();
     window.location.reload();
@@ -27,14 +26,10 @@ export const MemoDelete = (props) => {
       aria-describedby="modal-modal-description"
     >
       <Box sx={style}>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          削除確認
-        </Typography>
         <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-          データを削除すると復旧することはできません。<br/>
-          削除してよろしいでしょうか？
+          データ削除後は復旧できません。
         </Typography>
-        <Box sx={{ mt:3,display: "flex", justifyContent: "space-around" }}>
+        <Box sx={{ mt: 3, display: "flex", justifyContent: "space-around" }}>
           <Button sx={{ mt: 2, mb: 2 }} onClick={handleClose}>
             Cancel
           </Button>
@@ -58,8 +53,8 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
+  width: 300,
   bgcolor: "background.paper",
   borderRadius: 4,
-  p: 2,
+  p: 1,
 };

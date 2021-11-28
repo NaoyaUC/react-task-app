@@ -10,10 +10,7 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import CircularProgress from "@mui/material/CircularProgress";
-
-import { MemoDelete } from "./MemoDelete";
 import { MemoEdit } from "./MemoEdit";
-import { CreatedAt } from "components/parts/CreatedAt";
 
 export const MemoList = () => {
   const { user } = useAuthContext();
@@ -21,18 +18,9 @@ export const MemoList = () => {
   const [load, setLoad] = useState(true);
   const [memos, setMemo] = useState([]);
 
-  //delete
-  const [id, setId] = useState();
-  const [open, setOpen] = useState(false);
-
   //edit
   const [editOpen, setEditOpen] = useState(false);
   const [editData, setEditData] = useState();
-
-  const openModal = (delete_id) => {
-    setId(delete_id);
-    setOpen(true);
-  };
 
   const openEditModal = (data) => {
     setEditData(data);
@@ -89,7 +77,6 @@ export const MemoList = () => {
           <NavLink to="/memo/create" style={{ color:"#fff",textDecoration:"none" }}>新規作成</NavLink>
         </Button>
 
-        <MemoDelete delete_id={id} open={open} setOpen={setOpen} />
         <MemoEdit data={editData} open={editOpen} setOpen={setEditOpen} />
 
         <Grid container>
@@ -111,16 +98,6 @@ export const MemoList = () => {
                 >
                   <Typography variant="overline">{item.title}</Typography>
                   <div style={{}}>{item.memo}</div>
-                  <div style={{ marginTop: "auto", alignSelf: "center" }}>
-                    <Button
-                      variant="contained"
-                      sx={{ my: 1 }}
-                      color="error"
-                      onClick={() => openModal(item)}
-                    >
-                      削除
-                    </Button>
-                  </div>
                 </Box>
               </Grid>
             );
