@@ -1,143 +1,156 @@
 import { useState, useEffect } from "react";
-import { NavLink, useNavigate, useParams } from "react-router-dom";
 import firebase from "firebase/compat/app";
 import { db } from "firebase";
-import { doc, getDoc } from "firebase/firestore";
 
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
+import TextField from "@mui/material/TextField";
+import Modal from "@mui/material/Modal";
+import { CreatedAt } from "components/parts/CreatedAt";
+import { MemoDelete } from "./MemoDelete";
 
-export const MemoEdit = () => {
+export const MemoEdit = (props) => {
+  //propsでdataの受取
+  const { data, open, setOpen } = props;
 
-  const { id } = useParams();
+  const handleClose = () => setOpen(false);
+  const [title, setTitle] = useState("");
+  const [id, setId] = useState("");
+  const [memo, setMemo] = useState("");
+  const [date, setDate] = useState({});
   const [load, setLoad] = useState(true);
 
-  const [ title,setTitle] = useState('');
-  const [date,setDate] = useState('');
-  const [memo,setMemo] = useState('');
+  const [delOpen, setDelOpen] = useState(false);
+
+
+  //削除モーダルの表示
+  const openEditModal = (event) => {
+    event.preventDefault();
+    setDelOpen(true);
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     handleUpdate();
   };
 
-  const histrory = useNavigate();
-
-  async function getTask() {
-    const docRef = doc(db, "tasks", id);
-    const docSnap = await getDoc(docRef);
-
-    if ( docSnap.exists()) {
-      console.log(docSnap.data());
-      const data = docSnap.data();
-
-      setTitle(data.title);
-      setMemo(data.memo);
-      setDate(data.date);
-
-      setLoad(false);
-    } else {
-      console.log("No such document!");
-    }
-  }
-
   useEffect(() => {
-    getTask();
-  }, []);
+    const getTask = () => {
+      setTitle(data.title);
+      setId(data.id);
+      setMemo(data.memo);
+      setDate({
+        created: data.created,
+        updated: data.updated,
+      });
+      setLoad(true);
+    };
+
+    if (data) {
+      getTask();
+    }
+  }, [data]);
 
   async function handleUpdate() {
     let timestamp = firebase.firestore.FieldValue.serverTimestamp();
 
-    db.collection("tasks")
-      .doc(id)
-      .set({
-        title: title,
-        date: date,
-        memo: memo,
-        updatedAt: timestamp,
-      });
+    //エラー処理
+    if (title === "") {
+      alert("未入力です");
+      return;
+    }
+
+    await db.collection("tasks").doc(id).update({
+      title: title,
+      memo: memo,
+      updatedAt: timestamp,
+    });
     alert("変更しました");
 
-    histrory("/memo");
+    //画面を閉じる?再読み込み
+    window.location.reload();
   }
 
-  if (load) {
-    return <p></p>
+  if (!load) {
+    return "";
   } else {
     return (
-      <Container component="main" maxWidth="xs">
-        <Box
-          sx={{
-            marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Typography component="h1" variant="h5">
-            編集
-          </Typography>
-          <Box
-            component="form"
-            noValidate
-            onSubmit={handleSubmit}
-            sx={{ mt: 3 }}
-          >
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  name="title"
-                  required
-                  fullWidth
-                  id="title"
-                  label="タイトル"
-                  autoFocus
-                  value={title}
-                  onChange={(event) => setTitle(event.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="date"
-                  type="date"
-                  name="date"
-                  value={date}
-                  onChange={(event) => setDate(event.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="memo"
-                  name="memo"
-                  multiline
-                  rows={4}
-                  value={memo}
-                  onChange={(event) => setMemo(event.target.value)}
-                />
-              </Grid>
-            </Grid>
-            <Button
-              type="submit"
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Box component="form" noValidate onSubmit={handleSubmit}>
+            <small>
+              作成日:
+              <CreatedAt day={date.created} />
+              &nbsp; 更新日:
+              <CreatedAt day={date.updated} />
+            </small>
+
+            <TextField
+              name="title"
+              required
               fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              color="success"
+              id="title"
+              autoFocus
+              value={title}
+              style={{ marginBottom: 8 }}
+              onChange={(event) => setTitle(event.target.value)}
+            />
+            <TextField
+              required
+              fullWidth
+              id="memo"
+              name="memo"
+              multiline
+              rows={4}
+              value={memo}
+              onChange={(event) => setMemo(event.target.value)}
+            />
+            <Box
+              sx={{ mt: 2, display: "flex", justifyContent: "space-around" }}
             >
-              更新
-            </Button>
-          </Box>
+              <Button sx={{ mt: 1, mb: 1 }} onClick={handleClose}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+                color="warning"
+              >
+                更新
+              </Button>
+
+              <Button
+                variant="contained"
+                color="error"
+                sx={{ mt: 3, mb: 2 }}
+                onClick={(event) => openEditModal(event)}
+              >
+                削除
+              </Button>
+            </Box>
+          </Box>          
+          <MemoDelete delete_id={id} open={delOpen} setOpen={setDelOpen} />
         </Box>
-        <NavLink to="/memo/">一覧に戻る</NavLink>
-      </Container>
+      </Modal>
     );
   }
 };
 
+const style = {
+  position: "absolute",
+  textAlign: "center",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  maxWidth: 600,
+  width:"100%",
+  bgcolor: "background.paper",
+  borderRadius: 4,
+  p: 2,
+};

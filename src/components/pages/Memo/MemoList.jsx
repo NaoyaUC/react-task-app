@@ -2,111 +2,108 @@ import "firebase";
 import { db } from "firebase";
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
+import { useAuthContext } from "components/Auth/AuthContext";
+
+import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import { MemoDelete } from "./MemoDelete";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import CircularProgress from "@mui/material/CircularProgress";
+import { MemoEdit } from "./MemoEdit";
 
 export const MemoList = () => {
+  const { user } = useAuthContext();
+  const uid = user.uid;
+  const [load, setLoad] = useState(true);
   const [memos, setMemo] = useState([]);
 
-  const [id, setId] = useState();
-  const [open, setOpen] = useState(false);
+  //edit
+  const [editOpen, setEditOpen] = useState(false);
+  const [editData, setEditData] = useState();
 
-  const openModal = (delete_id) =>{
-    console.log(delete_id);
-    setId(delete_id);
-    setOpen(true);    
-  }
-
-  function getTasks() {
-    db.collection("tasks")
-      .orderBy("date", "desc")
-      .get()
-      .then((query) => {
-        var buff = [];
-        query.forEach((doc) => {
-          var data = doc.data();
-          buff.push({
-            id: doc.id,
-            date: data.date,
-            title: data.title,
-            memo: data.memo,
-          });
-        });
-        // console.log(buff);
-        setMemo(buff);
-      })
-      .catch((error) => {
-        console.log(`データの取得に失敗しました (${error})`);
-      });
-  }
+  const openEditModal = (data) => {
+    setEditData(data);
+    setEditOpen(true);
+  };
 
   useEffect(() => {
+    const getTasks = () => {
+      db.collection("tasks")
+        .where("docId", "==", uid)
+        .orderBy("createdAt", "desc")
+        .limit(8)
+        .get()
+        .then((query) => {
+          var buff = [];
+          query.forEach((doc) => {
+            var data = doc.data();
+            buff.push({
+              id: doc.id,
+              created: data.createdAt,
+              updated: data.updatedAt,
+              title: data.title,
+              memo: data.memo,
+            });
+          });
+          // console.log(buff);
+          setMemo(buff);
+          setLoad(false);
+        })
+        .catch((error) => {
+          console.log(`データの取得に失敗しました (${error})`);
+        });
+    };
     getTasks();
-  }, []);
+  }, [uid]);
 
-  return (
-    <div style={{ margin: "2em" }}>
-      <Typography
-        sx={{ textAlign: "center", m: 1 }}
-        component="h1"
-        variant="h5"
-      >
-        メモ一覧
-      </Typography>
+  if (load) {
+    return (
+      <Container component="main">
+        <CircularProgress />
+      </Container>
+    );
+  } else {
+    return (
+      <Container component="main">
+        <Typography
+          sx={{ textAlign: "center", m: 1 }}
+          component="h1"
+          variant="h5"
+        >
+          メモ一覧
+        </Typography>
+        <Button variant="contained" sx={{ my: 1, mr: 1 }} color="secondary">
+          <NavLink to="/memo/create" style={{ color:"#fff",textDecoration:"none" }}>新規作成</NavLink>
+        </Button>
 
-      <NavLink to="/memo/create">新規作成</NavLink>
+        <MemoEdit data={editData} open={editOpen} setOpen={setEditOpen} />
 
-      <MemoDelete delete_id={id} open={open} setOpen={setOpen}/>
-
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>作成日</TableCell>
-              <TableCell>タイトル</TableCell>
-              <TableCell>詳細</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {memos.map((item, index) => {
-              return (
-                <TableRow key={index}>
-                  <TableCell>{item.date}</TableCell>
-                  <TableCell>{item.title}</TableCell>
-                  <TableCell>{item.memo}</TableCell>
-                  <TableCell>
-                    <Button
-                      variant="contained"
-                      sx={{ mt: 2, mb: 2, mr: 1 }}
-                      color="warning"
-                      component={NavLink}
-                      to={`/memo/edit/${item.id}`}
-                    >
-                      編集
-                    </Button>
-                    <Button
-                      variant="contained"
-                      sx={{ mt: 2, mb: 2 }}
-                      color="error"
-                      onClick={()=> openModal(item.id)}
-                    >
-                      削除
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </div>
-  );
+        <Grid container>
+          {memos.map((item, index) => {
+            return (
+              <Grid item key={index} sx={{ p: "8px" }}>
+                <Box
+                  sx={{
+                    width: 200,
+                    height: 200,
+                    backgroundColor: "#fafafa",
+                    borderRadius: 4,
+                    padding: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => openEditModal(item)}
+                >
+                  <Typography variant="overline">{item.title}</Typography>
+                  <div style={{}}>{item.memo}</div>
+                </Box>
+              </Grid>
+            );
+          })}
+        </Grid>
+      </Container>
+    );
+  }
 };

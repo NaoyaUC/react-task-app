@@ -1,7 +1,13 @@
-import React from "react";
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { Link,useNavigate } from "react-router-dom";
 import { auth } from "../../firebase";
+
+import TextField from "@mui/material/TextField";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import Button from "@mui/material/Button";
+// import Alert from "@mui/material/Alert";
 
 export const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -12,11 +18,8 @@ export const SignUp = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    // console.log(email, password);
-    const { email, password } = event.target.elements;
-
     try {
-      await auth.createUserWithEmailAndPassword(email.value, password.value);
+      await auth.createUserWithEmailAndPassword(email, password);
       history.push("/");
     } catch (error) {
       console.log(error);
@@ -33,32 +36,61 @@ export const SignUp = () => {
   };
 
   return (
-    <div>
-      <h1>ユーザ登録</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>メールアドレス</label>
-          <input
+    <Container component="main" maxWidth="xs">
+      <Box
+        sx={{
+          marginTop: 8,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          boxShadow: 12,
+          padding: 2,
+          marginBottom: 8,
+        }}
+      >
+        <Typography component="h1" variant="h5">
+          ユーザ登録
+        </Typography>
+        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 2 }}>
+          <TextField
             name="email"
+            required
+            fullWidth
+            id="email"
+            label="メールアドレス"
             type="email"
-            placeholder="email"
+            value={email}
+            autoFocus
+            margin="normal"
             onChange={(event) => handleChangeEmail(event)}
           />
-        </div>
-        <div>
-          <label>パスワード</label>
-          <input
-            name="password"
+
+          <TextField
+            name="title"
+            required
+            fullWidth
             type="password"
-            placeholder="password"
+            id="password"
+            label="パスワード"
+            value={password}
+            margin="normal"
             onChange={(event) => handleChangePassword(event)}
           />
-        </div>
-        <div>
-          <button>登録</button>
-        </div>
-      </form>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-    </div>
+
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            登録
+          </Button>
+        </Box>
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        <p>
+          <Link to={"/login"}>ログインはこちら</Link>
+        </p>
+      </Box>
+    </Container>
   );
 };
