@@ -5,25 +5,15 @@ import { NavLink } from "react-router-dom";
 import { useAuthContext } from "components/Auth/AuthContext";
 
 import Container from "@mui/material/Container";
-import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import { MemoDelete } from "./MemoDelete";
 import { MemoEdit } from "./MemoEdit";
 import { CreatedAt } from "components/parts/CreatedAt";
-import CircularProgress from "@mui/material/CircularProgress";
-
-import { styled } from "@mui/material/styles";
-
-
-
-const PaperX = styled(Paper)({
-  padding: 1,
-  width:"100%",
-  backgroundColor: "#f2fcd1"
-});
 
 export const MemoList = () => {
   const { user } = useAuthContext();
@@ -95,31 +85,33 @@ export const MemoList = () => {
         >
           メモ一覧
         </Typography>
-        <NavLink to="/memo/create">新規作成</NavLink>
+        <Button variant="contained" sx={{ my: 1, mr: 1 }} color="secondary">
+          <NavLink to="/memo/create" style={{ color:"#fff",textDecoration:"none" }}>新規作成</NavLink>
+        </Button>
 
         <MemoDelete delete_id={id} open={open} setOpen={setOpen} />
         <MemoEdit data={editData} open={editOpen} setOpen={setEditOpen} />
 
-        <Grid container >
+        <Grid container>
           {memos.map((item, index) => {
             return (
-              <Grid item sm={12} md={2} lg={2} key={index} sx={{ p: 1 }}>
-                <PaperX elevation={0}>
-                  <div>
-                    {item.title}
-                    <CreatedAt day={item.created} />
-                  </div>
-                  <div>{item.memo}</div>
-                  <div>
-                    <Button
-                      variant="contained"
-                      sx={{ my: 1, mr: 1 }}
-                      color="warning"
-                      onClick={() => openEditModal(item)}
-                    >
-                      編集
-                    </Button>
-
+              <Grid item key={index} sx={{ p: "8px" }}>
+                <Box
+                  sx={{
+                    width: 200,
+                    height: 200,
+                    backgroundColor: "#fafafa",
+                    borderRadius: 4,
+                    padding: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => openEditModal(item)}
+                >
+                  <Typography variant="overline">{item.title}</Typography>
+                  <div style={{}}>{item.memo}</div>
+                  <div style={{ marginTop: "auto", alignSelf: "center" }}>
                     <Button
                       variant="contained"
                       sx={{ my: 1 }}
@@ -129,7 +121,7 @@ export const MemoList = () => {
                       削除
                     </Button>
                   </div>
-                </PaperX>
+                </Box>
               </Grid>
             );
           })}
@@ -138,4 +130,3 @@ export const MemoList = () => {
     );
   }
 };
-

@@ -3,11 +3,10 @@ import firebase from "firebase/compat/app";
 import { db } from "firebase";
 
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import { CreatedAt } from "components/parts/CreatedAt";
+import TextField from "@mui/material/TextField";
 import Modal from "@mui/material/Modal";
+import { CreatedAt } from "components/parts/CreatedAt";
 
 export const MemoEdit = (props) => {
   //propsでdataの受取
@@ -74,9 +73,6 @@ export const MemoEdit = (props) => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Typography component="h1" variant="h5">
-            編集
-          </Typography>
           <Box
             component="form"
             noValidate
@@ -97,6 +93,7 @@ export const MemoEdit = (props) => {
               id="title"
               autoFocus
               value={title}
+              style={{ marginBottom:"2" }}
               onChange={(event) => setTitle(event.target.value)}
             />
             <TextField
