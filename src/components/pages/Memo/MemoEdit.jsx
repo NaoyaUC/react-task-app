@@ -97,7 +97,7 @@ export const MemoEdit = (props) => {
               id="title"
               autoFocus
               value={title}
-              style={{ marginBottom: "2" }}
+              style={{ marginBottom: 8 }}
               onChange={(event) => setTitle(event.target.value)}
             />
             <TextField
@@ -111,7 +111,7 @@ export const MemoEdit = (props) => {
               onChange={(event) => setMemo(event.target.value)}
             />
             <Box
-              sx={{ mt: 3, display: "flex", justifyContent: "space-around" }}
+              sx={{ mt: 2, display: "flex", justifyContent: "space-around" }}
             >
               <Button sx={{ mt: 1, mb: 1 }} onClick={handleClose}>
                 Cancel
@@ -134,8 +134,7 @@ export const MemoEdit = (props) => {
                 削除
               </Button>
             </Box>
-          </Box>
-
+          </Box>          
           <MemoDelete delete_id={id} open={delOpen} setOpen={setDelOpen} />
         </Box>
       </Modal>

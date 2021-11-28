@@ -13,6 +13,7 @@ export const MemoDelete = (props) => {
   async function handleDelete() {
     await deleteDoc(doc(db, "tasks", delete_id));
     alert("削除しました");
+
     //画面を閉じる?再読み込み
     handleClose();
     window.location.reload();
@@ -29,7 +30,7 @@ export const MemoDelete = (props) => {
         <Typography id="modal-modal-description" sx={{ mt: 2 }}>
           データ削除後は復旧できません。
         </Typography>
-        <Box sx={{ mt: 3, display: "flex", justifyContent: "space-around" }}>
+        <Box sx={{ mt: 1, display: "flex", justifyContent: "space-around" }}>
           <Button sx={{ mt: 2, mb: 2 }} onClick={handleClose}>
             Cancel
           </Button>
